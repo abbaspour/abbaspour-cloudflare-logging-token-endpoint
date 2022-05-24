@@ -9,12 +9,10 @@ variable "cf_api_key" {
   sensitive = true
 }
 
-/*
 variable "cf_account_id" {
   type = string
   description = "Cloudflare account ID"
 }
-*/
 
 variable "main_endpoint" {
   type = string
