@@ -4,6 +4,10 @@ terraform {
       source = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
+    auth0 = {
+      source = "auth0/auth0"
+      version = "~> 0.30"
+    }
   }
 }
 
@@ -14,3 +18,8 @@ provider "cloudflare" {
 }
 
 
+provider "auth0" {
+  domain = var.auth0_domain
+  client_id = var.auth0_tf_client_id
+  client_secret = var.auth0_tf_client_secret
+}

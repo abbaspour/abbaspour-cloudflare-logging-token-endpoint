@@ -1,13 +1,16 @@
-function(access_token, ctx, callback) {
+function fetchUserProfile(access_token, ctx, callback) {
     'use strict';
 
     const jsonwebtoken = require('jsonwebtoken');
 
-    if (!ctx.id_token) {
+    console.log('ctx: ' + JSON.stringify(ctx));
+
+    const { id_token } = ctx;
+    if (!id_token) {
         return callback('missing-id_token');
     }
 
-    const jwt = jsonwebtoken.decode(ctx.id_token);
+    const jwt = jsonwebtoken.decode(id_token);
 
     if (!jwt)
         return callback('malformed-id_token');

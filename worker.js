@@ -1,6 +1,13 @@
 async function readRequestBody(request) {
     const {headers} = request
-    const contentType = headers.get("content-type") || ""
+    const contentType = headers.get("content-type") || "";
+
+    /*
+    console.log('contentType from auth0: ' + contentType);
+    let requestHeaders = JSON.stringify([...request.headers], null, 2)
+    console.log(`Request headers: ${requestHeaders}`)
+    */
+
 
     if (contentType.includes("application/json")) {
         return await request.json()
@@ -29,8 +36,9 @@ const encodeFormData = (data) => {
 }
 
 async function gatherResponse(response) {
-    const {headers} = response
-    const contentType = headers.get("content-type") || ""
+    const {headers} = response;
+    const contentType = headers.get("content-type") || "";
+
     if (contentType.includes("application/json")) {
         return JSON.stringify(await response.json())
     } else if (contentType.includes("application/text")) {
@@ -47,14 +55,15 @@ async function handleRequest(request) {
 
     const reqBody = await readRequestBody(request);
 
-    console.log(`form data: ${JSON.stringify(reqBody)}`);
+    console.log(`reqBody: ${JSON.stringify(reqBody)}`);
 
     const {code, client_id, client_secret, code_verifier, grant_type, redirect_uri} = reqBody;
 
     const body = {
         grant_type: grant_type,
-        //client_id: `${client_id}`,
+        //client_id: client_id,
         //client_secret: client_secret,
+        //code_verifier: code_verifier,
         code: code,
         redirect_uri: redirect_uri
     };
@@ -64,14 +73,14 @@ async function handleRequest(request) {
         method: "POST",
         headers: {
             'content-type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic bWNhZmVlX28ycHJvdGVjdF8yOm1jYWZlZV9vMnByb3RlY3Rfc2VjcmV0XzI='
+            'Authorization': 'Basic ' + btoa(`${client_id}:${client_secret}`)
         },
     };
 
     console.log(`sending token request to endpoint: ${ENDPOINT} with payload ${JSON.stringify(body)} using param of ${JSON.stringify(init)}`);
     const response = await fetch(`${ENDPOINT}`, init);
     const results = await gatherResponse(response);
-    console.log(`result back from O2D: ${JSON.stringify(results)}`);
+    console.log(`upstream token result: ${JSON.stringify(results)}`);
     const {id_token} = JSON.parse(results);
 
     return new Response(results, init);

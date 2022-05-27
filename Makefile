@@ -1,4 +1,5 @@
 PLAN_FILE=cf.plan
+WORKER_NAME=cf-jp-log-token-endpoint # TODO: get from tf
 
 main: plan
 
@@ -20,4 +21,10 @@ clean:
 graph:
 	terraform graph | dot -Tsvg > graph.svg
 
-.PHONY: clean plan
+logs: log
+
+log:
+	wrangler tail $(WORKER_NAME)
+
+
+.PHONY: clean plan log logs
